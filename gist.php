@@ -29,13 +29,14 @@ class plgContentGist extends JPlugin
 	 */
 	public function onContentPrepare($context, &$row, &$params, $page = 0)
 	{
+		
 		// Don't run this plugin when the content is being indexed
 		if ($context == 'com_finder.indexer')
 		{
 			return true;
 		}
 		// if the value gist is not in the page exit, no need to process
-		if (JString::strpos($row->text, 'gist>') === false)
+		if (JString::strpos($row->text, '{gist') === false)
 		{
 			return true;
 		}		
@@ -57,17 +58,17 @@ class plgContentGist extends JPlugin
 	 */
 	protected function _gist(&$text, &$params)
 	{	
-		// pickup the username from the param field
-		//$username = (string) $this->params->def('github_username', 'unknown');
-		
+	
 		// find the custom gist tag
-		$pattern = "/<gist>(.*?)<\/gist>/";
-
+		$pattern = "/{gist (id=(\d+)){1}}/"; 
+//$match = preg_match($pattern, $text, $regs, PREG_OFFSET_CAPTURE);
+//print_r($regs);
 		// loop through every occurrence
 		while (preg_match($pattern, $text, $regs, PREG_OFFSET_CAPTURE))
 		{
+			
 			// make sure the ID is an int
-			$gist_id = (int) trim($regs[1][0]);
+			$gist_id = (int) trim($regs[2][0]);
 			
 			// create a link for Gist
 			//$replacement = '<script src="https://gist.github.com/'.$username.'/'.$gist_id.'.js"></script>';
